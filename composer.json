@@ -1,0 +1,13 @@
+{
+    "name": "suhanyujie/simple-script",
+    "description": "用 PHP 实现简单的脚本语言",
+    "type": "project",
+    "license": "Apache Liscence 2.0",
+    "authors": [
+        {
+            "name": "suhanyujie",
+            "email": "suhanyujie@qq.com"
+        }
+    ],
+    "require": {}
+}
