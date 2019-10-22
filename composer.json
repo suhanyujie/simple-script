@@ -9,5 +9,10 @@
             "email": "suhanyujie@qq.com"
         }
     ],
+    "autoload": {
+        "psr-4": {
+            "SRC\\": "src/"
+        }
+    },
     "require": {}
 }

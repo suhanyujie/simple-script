@@ -6,6 +6,8 @@
  * Time: 09:25
  */
 
+include_once "../vendor/autoload.php";
+
 /**
  * 编写读取源码相关逻辑
  *
