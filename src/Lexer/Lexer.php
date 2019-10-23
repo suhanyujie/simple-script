@@ -8,18 +8,33 @@
 
 namespace SRC\Lexer;
 
-
+/**
+ * 词法分析器
+ * Class Lexer
+ * @package SRC\Lexer
+ */
 class Lexer
 {
-    protected $src = '';
     /**
-     * @desc
+     * @var Source
      */
-    public function __construct($src='')
+    protected $src = null;
+
+    /**
+     * @desc 构造方法
+     */
+    public function __construct(Source $src)
     {
         $this->src = $src;
     }
 
+    /**
+     * @desc
+     */
+    public function peek()
+    {
+        
+    }
 
     /**
      * @desc
@@ -28,7 +43,6 @@ class Lexer
     {
 
     }
-
 
     /**
      * @desc 忽略空白符
