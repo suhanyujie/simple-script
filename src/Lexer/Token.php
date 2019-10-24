@@ -11,12 +11,23 @@ namespace SRC\Lexer;
 
 class Token
 {
-    const EOF = "eof";
-    const STRING = "string";
-    const NUMBER = "number";
-    const MUL = "*";
-    const DIV = "/";
-    const ADD = "+";
-    const SUB = "-";
-    const PRINT_STMT = "print";
+
+    protected $type;
+
+    protected $value;
+
+    /**
+     * @var SourceLoc
+     */
+    protected $loc;
+
+    /**
+     * @desc 构造函数
+     */
+    public function __construct($type, $value, SourceLoc $loc)
+    {
+        $this->type = $type;
+        $this->value = $value;
+        $this->loc = $loc;
+    }
 }
