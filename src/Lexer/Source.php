@@ -9,6 +9,7 @@
 namespace SRC\Lexer;
 
 use SRC\Common\BaseTrait;
+use SRC\Lexer\Position;
 
 /**
  * 源码读取器
@@ -56,7 +57,7 @@ class Source
         $ret = [];
         while ($num) {
             $nextIndex = $this->offset + 1;
-            $c = $this->code[$nextIndex];
+            $c = $this->code[$nextIndex] ?? null;
             if (!isset($c)) {
                 $c = TokenType::EOF;
                 array_push($ret, $c);
@@ -70,10 +71,14 @@ class Source
                     $this->line++;
                     $this->col = 0;
                 }
+                $c = self::EOL;
             }
-
+            array_push($ret, $c);
             $num--;
         }
+        $retString = implode('', $ret);
+
+        return $retString;
     }
 
     /**
@@ -86,5 +91,38 @@ class Source
         $this->isPeek = false;
 
         return $token;
+    }
+
+    /**
+     * @desc 当前字符位置
+     */
+    public function getPos()
+    {
+        return new Position($this->offset, $this->line, $this->col);
+    }
+
+    /**
+     * @desc 暂存位置
+     */
+    public function stashPos()
+    {
+        array_push($this->stashPos(), $this->getPos());
+    }
+
+    /**
+     * @desc 将暂存的位置进行恢复 状态恢复
+     */
+    public function stashPopPos()
+    {
+        /**
+         * @var Position
+         */
+        $pos = array_pop($this->posStack);
+        if (!isset($pos)) {
+            throw new \Exception("unknow stash posi in stashPos array!", -1001);
+        }
+        $this->offset = $pos->offset;
+        $this->line   = $pos->line;
+        $this->col    = $pos->col;
     }
 }

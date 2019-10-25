@@ -41,7 +41,9 @@ class Lexer
      */
     public function next()
     {
+        $token = $this->src->read();
 
+        return $token;
     }
 
     /**
