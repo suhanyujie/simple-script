@@ -104,7 +104,7 @@ class Source
     /**
      * @desc 暂存位置
      */
-    public function stashPos()
+    public function pushPos()
     {
         array_push($this->stashPos(), $this->getPos());
     }
@@ -112,7 +112,7 @@ class Source
     /**
      * @desc 将暂存的位置进行恢复 状态恢复
      */
-    public function stashPopPos()
+    public function restorePos()
     {
         /**
          * @var Position

@@ -29,15 +29,19 @@ class Lexer
     }
 
     /**
-     * @desc
+     * @desc 前看一个 token
      */
     public function peek()
     {
-        
+        $this->src->pushPos();
+        $token = $this->next();
+        $this->src->restorePos();
+
+        return $token;
     }
 
     /**
-     * @desc
+     * @desc 获取下一个 token
      */
     public function next()
     {
