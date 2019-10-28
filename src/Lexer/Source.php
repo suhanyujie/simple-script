@@ -27,11 +27,29 @@ class Source
 
     protected $code;
     protected $file;
+    /**
+     * @var string 当前的字符的值
+     */
     protected $ch;
+    /**
+     * @var int 当前字符的偏移量
+     */
     protected $offset;
+    /**
+     * @var int 当前字符所在的行
+     */
     protected $line;
+    /**
+     * @var int 当前字符所在的列
+     */
     protected $col;
+    /**
+     * @var bool 标识当前读取字符是否是处于 peek 模式
+     */
     protected $isPeek;
+    /**
+     * @var array peek 模式时的存储位置信息数组
+     */
     protected $posStack;
 
     /**
@@ -56,25 +74,35 @@ class Source
     {
         $ret = [];
         while ($num) {
-            $nextIndex = $this->offset + 1;
+            $offset = $this->offset;
+            $nextIndex = $offset + 1;
             $c = $this->code[$nextIndex] ?? null;
+            echo $c."\n";
             if (!isset($c)) {
                 $c = TokenType::EOF;
                 array_push($ret, $c);
                 break;
             }
-            $this->offset = $nextIndex;
+            $offset = $nextIndex;
+            // 如果是换行符，并且非 peek 模式，则 line++
+            // 如果不是换行符，且非 peek，则 col++
             if ($c === self::CR || $c === self::NL) {
                 // 判断是否是换行符 \r\n
-                if ($c === self::CR && $this->code[$nextIndex + 1] === self::NL) $this->offset++;
+                if ($c === self::CR && $this->code[$nextIndex + 1] === self::NL) $offset++;
                 if (!$this->isPeek) {
                     $this->line++;
                     $this->col = 0;
                 }
                 $c = self::EOL;
+            } elseif(!$this->isPeek) {
+                $this->col++;
             }
             array_push($ret, $c);
             $num--;
+        }
+        if (!$this->isPeek) {
+            $this->ch = $c;
+            $this->offset = $offset;
         }
         $retString = implode('', $ret);
 

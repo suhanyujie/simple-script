@@ -5,6 +5,7 @@
 |参数名  |说明  |备注  |
 |:---- |:-----|:----- |
 | -1001 | unknow stash posi in stashPos array! |    |
+| -1011 | recognize token failed! |    |
 
 
 ## 参考

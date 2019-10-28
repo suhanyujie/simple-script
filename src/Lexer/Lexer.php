@@ -45,16 +45,36 @@ class Lexer
      */
     public function next()
     {
-        $token = $this->src->read();
+        // 读取字符前，先跳过空白符
+        $this->skipWhitespace();
+        $ch = $this->src->read();
+        switch ($ch) {
+            case 'i':
+                $tk = $this->src->peek(2);
+                var_dump($tk);die;
+                break;
+            case 's':
+                break;
+            default:
+                throw new \Exception("识别 token 失败！[{$ch}]", -1011);
+        }
 
         return $token;
     }
 
     /**
-     * @desc 忽略空白符
+     * @desc 忽略空白符，循环"预读"空白符，如果是空白符，则跳过
      */
     public function skipWhitespace()
     {
-
+        while (true) {
+            $ch = $this->src->peek();
+            if ($ch === ' ' || $ch === "\t" || $ch === Source::EOL) {
+                // 空白符时，只做消耗，可以不处理
+                $this->src->read();
+                continue;
+            }
+            break;
+        }
     }
 }
