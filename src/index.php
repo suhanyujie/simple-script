@@ -15,8 +15,8 @@ use SRC\Lexer\Lexer;
  *
  */
 
-$src = new Source("string a = '12312312;'");
-$token = $src->read();
-$lexer = new Lexer($src);
+$srcObj = new Source("string a = '12312312;'");
+$lexer = new Lexer($srcObj);
+
 var_dump($lexer->next());exit(PHP_EOL.'09:03'.PHP_EOL);
 

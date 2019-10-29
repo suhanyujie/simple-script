@@ -48,16 +48,20 @@ class Lexer
         // 读取字符前，先跳过空白符
         $this->skipWhitespace();
         $ch = $this->src->read();
+        echo $ch."\n";
         switch ($ch) {
             case 'i':
                 $tk = $this->src->peek(2);
                 var_dump($tk);die;
                 break;
             case 's':
+                $tk = $this->src->peek(5);
+                var_dump($tk);die;
                 break;
             default:
                 throw new \Exception("识别 token 失败！[{$ch}]", -1011);
         }
+        exit("end");
 
         return $token;
     }

@@ -77,7 +77,6 @@ class Source
             $offset = $this->offset;
             $nextIndex = $offset + 1;
             $c = $this->code[$nextIndex] ?? null;
-            echo $c."\n";
             if (!isset($c)) {
                 $c = TokenType::EOF;
                 array_push($ret, $c);
@@ -110,15 +109,15 @@ class Source
     }
 
     /**
-     * @desc 预读一个 token 前看一个 token
+     * @desc 预读一个 token 前看一个字符
      */
     public function peek($num=1)
     {
         $this->isPeek = true;
-        $token = $this->read($num);
+        $ch = $this->read($num);
         $this->isPeek = false;
 
-        return $token;
+        return $ch;
     }
 
     /**
