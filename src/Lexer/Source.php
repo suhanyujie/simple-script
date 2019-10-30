@@ -38,11 +38,11 @@ class Source
     /**
      * @var int 当前字符所在的行
      */
-    protected $line;
+    public $line;
     /**
      * @var int 当前字符所在的列
      */
-    protected $col;
+    public $col;
     /**
      * @var bool 标识当前读取字符是否是处于 peek 模式
      */
@@ -73,8 +73,8 @@ class Source
     public function read($num=1)
     {
         $ret = [];
+        $offset = $this->offset;
         while ($num) {
-            $offset = $this->offset;
             $nextIndex = $offset + 1;
             $c = $this->code[$nextIndex] ?? null;
             if (!isset($c)) {

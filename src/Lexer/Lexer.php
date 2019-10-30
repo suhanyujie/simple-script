@@ -47,23 +47,49 @@ class Lexer
     {
         // 读取字符前，先跳过空白符
         $this->skipWhitespace();
-        $ch = $this->src->read();
+        $ch = $this->src->peek();
         echo $ch."\n";
         switch ($ch) {
             case 'i':
-                $tk = $this->src->peek(2);
-                var_dump($tk);die;
+                $flag = $this->src->peek(3);
+                if ($flag === 'int') {
+                    return this.readInt();
+                }
                 break;
             case 's':
-                $tk = $this->src->peek(5);
-                var_dump($tk);die;
+                $flag = $this->src->peek(5);
+                if ($flag === 'string') {
+                    return $this->readString();
+                }
                 break;
             default:
                 throw new \Exception("识别 token 失败！[{$ch}]", -1011);
         }
-        exit("end");
+    }
 
-        return $token;
+    /**
+     * @desc 读取接下来的字符串并返回 token 信息
+     */
+    public function readString()
+    {
+        // 定义一个 token 对象
+        // 获取该 token 的位置对象
+        // 获取 token 对应的值
+        $token = new Token(TokenType::STRING);
+        $token->loc->start = $this->getPos();
+        $this->src->read();
+        $value = [];
+        while (true) {
+            $tmpCh = $this->src->read();
+            if (in_array($tmpCh, ['\'', '"'])) {
+                break;
+            } elseif ($tmpCh === Source::EOF) {
+                throw $this->makeExcepton();
+            }
+            array_push($value, $tmpCh);
+        }
+
+        return implode('', $value);
     }
 
     /**
@@ -80,5 +106,22 @@ class Lexer
             }
             break;
         }
+    }
+
+    /**
+     * @desc 获取当前文本源码位置
+     */
+    public function getPos()
+    {
+        return $this->src->getPos();
+    }
+
+    /**
+     * @desc 通用异常
+     */
+    public function makeExcepton()
+    {
+        return new \Exception("Unexpected error in line:{$this->src
+        ->line} column:{$this->src->col}!");
     }
 }

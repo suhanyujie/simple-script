@@ -14,20 +14,40 @@ class Token
 
     protected $type;
 
-    protected $value;
+    /**
+     * @var token 对应的值信息
+     */
+    public $value;
 
     /**
      * @var SourceLoc
+     * token 对应的源码位置等信息对象
      */
-    protected $loc;
+    public $loc;
 
     /**
      * @desc 构造函数
      */
-    public function __construct($type, $value, SourceLoc $loc)
+    public function __construct($type, $value=null, SourceLoc $loc=null)
     {
         $this->type = $type;
         $this->value = $value;
+        $this->loc = $loc;
+    }
+
+    /**
+     * @desc 设置 $value 属性
+     */
+    public function setValue($value='')
+    {
+        $this->value = $value;
+    }
+
+    /**
+     * @desc 设置 $loc 属性
+     */
+    public function setLoc(SourceLoc $loc)
+    {
         $this->loc = $loc;
     }
 }

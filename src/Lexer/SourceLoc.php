@@ -11,14 +11,20 @@ namespace SRC\Lexer;
 
 class SourceLoc
 {
-    protected $start;
+    /**
+     * @var Position
+     */
+    public $start;
 
-    protected $end;
+    /**
+     * @var Position
+     */
+    public $end;
 
     /**
      * @desc 构造方法
      */
-    public function __construct($start=0, $end=0)
+    public function __construct(Position $start=null, Position $end=null)
     {
         $this->start = $start;
         $this->end = $end;
