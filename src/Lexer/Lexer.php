@@ -57,8 +57,12 @@ class Lexer
                 }
                 break;
             case 's':
-                $flag = $this->src->peek(5);
+                $flag = $this->src->peek(6);
                 if ($flag === 'string') {
+                    // 读取类型
+                    // 读取标识符
+                    // 读取表达式值
+                    $tk = $this->readIdentity();
                     return $this->readString();
                 }
                 break;
@@ -81,15 +85,38 @@ class Lexer
         $value = [];
         while (true) {
             $tmpCh = $this->src->read();
-            if (in_array($tmpCh, ['\'', '"'])) {
+            if (in_array($tmpCh, ["'", '"'])) {
                 break;
             } elseif ($tmpCh === Source::EOF) {
                 throw $this->makeExcepton();
             }
             array_push($value, $tmpCh);
         }
+        $token->loc->end = $this->getPos();
+        $token->value = implode('', $value);
 
-        return implode('', $value);
+        return $token;
+    }
+
+    /**
+     * @desc 读取标识符
+     */
+    public function readIdentity()
+    {
+        $token = new Token(TokenType::IDENTITY);
+        $token->loc->start = $this->getPos();
+        $value = [];
+        while (true) {
+            $ch = $this->src->read();
+            if ($ch === ' ') {
+                break;
+            }
+            array_push($value, $ch);
+        }
+        $token->value = implode('', $value);
+        $token->loc->end = $this->getPos();
+
+        return $token;
     }
 
     /**

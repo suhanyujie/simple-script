@@ -15,7 +15,7 @@ use SRC\Lexer\Lexer;
  *
  */
 
-$srcObj = new Source("string a = '12312312;'");
+$srcObj = new Source("string a = '12312312';");
 $lexer = new Lexer($srcObj);
 
 var_dump($lexer->next());exit(PHP_EOL.'09:03'.PHP_EOL);

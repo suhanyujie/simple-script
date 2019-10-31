@@ -12,6 +12,7 @@ namespace SRC\Lexer;
 class TokenType
 {
     const EOF = "eof",
+        IDENTITY = "identity",
         STRING = "string",
         NUMBER = "number",
         MUL = "*",

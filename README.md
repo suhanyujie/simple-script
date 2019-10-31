@@ -7,6 +7,8 @@
 | -1001 | unknow stash posi in stashPos array! |    |
 | -1011 | recognize token failed! |    |
 
+## 其他
+* 使用 [bottlecaps](https://bottlecaps.de/rr/ui) 绘制基于 [EBNF](https://baike.baidu.com/item/EBNF/8954482) 的流程转换图。
 
 ## 参考
 * https://github.com/suhanyujie/hello_parser_of_js
