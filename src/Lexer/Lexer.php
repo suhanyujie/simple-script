@@ -62,7 +62,10 @@ class Lexer
                     // 读取类型
                     // 读取标识符
                     // 读取表达式值
-                    $tk = $this->readIdentity();
+                    $this->src->read(6);
+                    $this->skipWhitespace();
+                    $this->src->read(1);
+                    $this->skipWhitespace();
                     return $this->readString();
                 }
                 break;
@@ -73,6 +76,9 @@ class Lexer
 
     /**
      * @desc 读取接下来的字符串并返回 token 信息
+     * - 读取类型名
+     * - 读取标识符
+     * - 读取字符串值
      */
     public function readString()
     {
@@ -81,7 +87,7 @@ class Lexer
         // 获取 token 对应的值
         $token = new Token(TokenType::STRING);
         $token->loc->start = $this->getPos();
-        $this->src->read();
+        $this->src->read(5);
         $value = [];
         while (true) {
             $tmpCh = $this->src->read();

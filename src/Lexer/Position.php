@@ -24,7 +24,7 @@ class Position
     /**
      * @desc 构造一个源码字符的位置
      */
-    public function __construct($offset, $line, $col)
+    public function __construct($offset=0, $line=0, $col=0)
     {
         $this->offset = $offset;
         $this->line = $line;
