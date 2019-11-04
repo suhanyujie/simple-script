@@ -48,7 +48,6 @@ class Lexer
         // 读取字符前，先跳过空白符
         $this->skipWhitespace();
         $ch = $this->src->peek();
-        echo $ch."\n";
         switch ($ch) {
             case 'i':
                 $flag = $this->src->peek(3);
@@ -59,14 +58,18 @@ class Lexer
             case 's':
                 $flag = $this->src->peek(6);
                 if ($flag === 'string') {
-                    // 读取类型
+                    // 读取类型名
                     // 读取标识符
                     // 读取表达式值
-                    $this->src->read(6);
+                    $this->src->read(6);// string
                     $this->skipWhitespace();
-                    $this->src->read(1);
+                    // 读取消耗标识符
+                    $this->readIdentity();
                     $this->skipWhitespace();
-                    return $this->readString();
+                    $this->readAssignOp();// =
+                    $this->skipWhitespace();
+                    $value = $this->readString();
+                    return $value;
                 }
                 break;
             default:
@@ -85,9 +88,10 @@ class Lexer
         // 定义一个 token 对象
         // 获取该 token 的位置对象
         // 获取 token 对应的值
-        $token = new Token(TokenType::STRING);
+        $token = new Token(TokenType::STRING, null, new SourceLoc);
         $token->loc->start = $this->getPos();
-        $this->src->read(5);
+        // 消耗掉 第一个 字符串定界符
+        $this->src->read(1);
         $value = [];
         while (true) {
             $tmpCh = $this->src->read();
@@ -109,12 +113,12 @@ class Lexer
      */
     public function readIdentity()
     {
-        $token = new Token(TokenType::IDENTITY);
+        $token = new Token(TokenType::IDENTITY, null, new SourceLoc);
         $token->loc->start = $this->getPos();
         $value = [];
         while (true) {
             $ch = $this->src->read();
-            if ($ch === ' ') {
+            if ($ch === ' ' || preg_match('@[^\w]@', $ch)) {
                 break;
             }
             array_push($value, $ch);
@@ -139,6 +143,27 @@ class Lexer
             }
             break;
         }
+    }
+
+    /**
+     * @desc 读取赋值运算符
+     */
+    public function readAssignOp()
+    {
+        $token = new Token(TokenType::ASSIGN_OP, null, new SourceLoc);
+        $token->loc->start = $this->getPos();
+        $value = [];
+        while (true) {
+            $ch = $this->src->read();
+            if ($ch === ' ' || preg_match('@[^\w]@', $ch)) {
+                break;
+            }
+            array_push($value, $ch);
+        }
+        $token->value = implode('', $value);
+        $token->loc->end = $this->getPos();
+
+        return $token;
     }
 
     /**

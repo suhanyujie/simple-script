@@ -13,11 +13,15 @@ class TokenType
 {
     const EOF = "eof",
         IDENTITY = "identity",
-        STRING = "string",
-        NUMBER = "number",
+
+        ASSIGN_OP = "=",
         MUL = "*",
         DIV = "/",
         ADD = "+",
         SUB = "-",
-        PRINT_STMT = "print";
+
+        PRINT_STMT = "print",
+
+        STRING = "string",
+        NUMBER = "number";
 }
