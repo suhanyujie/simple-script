@@ -11,8 +11,12 @@ namespace SRC\Lexer;
 
 class Token
 {
+    // token 类型
+    public $type;
 
-    protected $type;
+    public $typeOfAssign = null;
+
+    public $identifier = null;
 
     /**
      * @var token 对应的值信息
@@ -28,11 +32,15 @@ class Token
     /**
      * @desc 构造函数
      */
-    public function __construct($type, $value=null, SourceLoc $loc=null)
+    public function __construct($type = null, $value = null, SourceLoc $loc = null)
     {
         $this->type = $type;
         $this->value = $value;
-        $this->loc = $loc;
+        if (empty($loc)) {
+            $this->loc = new SourceLoc();
+        } else {
+            $this->loc = $loc;
+        }
     }
 
     /**

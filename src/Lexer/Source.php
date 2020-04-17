@@ -74,6 +74,7 @@ class Source
     {
         $ret = [];
         $offset = $this->offset;
+        $c = null;
         while ($num) {
             $nextIndex = $offset + 1;
             $c = $this->code[$nextIndex] ?? null;
@@ -125,7 +126,8 @@ class Source
      */
     public function getPos()
     {
-        return new Position($this->offset, $this->line, $this->col);
+        $pos = (new Position($this->offset, $this->line, $this->col));
+        return $pos;
     }
 
     /**

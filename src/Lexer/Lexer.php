@@ -52,29 +52,98 @@ class Lexer
             case 'i':
                 $flag = $this->src->peek(3);
                 if ($flag === 'int') {
-                    return this.readInt();
+                    return $this->readInt();
                 }
                 break;
             case 's':
                 $flag = $this->src->peek(6);
                 if ($flag === 'string') {
-                    // 读取类型名
-                    // 读取标识符
-                    // 读取表达式值
-                    $this->src->read(6);// string
-                    $this->skipWhitespace();
-                    // 读取消耗标识符
-                    $this->readIdentity();
-                    $this->skipWhitespace();
-                    $this->readAssignOp();// =
-                    $this->skipWhitespace();
-                    $value = $this->readString();
-                    return $value;
+                    return $this->readStringAssign();
                 }
                 break;
+            case 'p':
+                $flag = $this->src->peek(5);
+                if ($flag === 'print') {
+                    $stmt = $this->readPrint();
+                    return $stmt;
+                }
+            case TokenType::EOF:
+                return TokenType::EOF;
             default:
                 throw new \Exception("识别 token 失败！[{$ch}]", -1011);
         }
+    }
+
+
+    /**
+     * @desc print 语句
+     *  - 支持打印字符串
+     */
+    public function readPrint()
+    {
+        $token = new Token();
+        $token->type = TokenType::PRINT_STMT;
+        $token->loc->start = $this->getPos();
+        // 消耗关键词
+        $this->src->read(strlen($token->type));
+        $this->skipWhitespace();
+        // 前看1个字符
+        $ch = $this->src->peek(1);
+        $value = '';
+        // 打印字符串
+        if (in_array($ch, ['"', '\''])) {
+            $this->src->read(1);
+            $delimiter = $ch;
+            while (true) {
+                $ch = $this->src->read();
+                if ($ch === $delimiter) {
+                    break;
+                } elseif ($ch === Source::EOF) {
+                    throw new \Exception("识别 print 语句失败", -1);
+                } else {
+                    $value .= $ch;
+                }
+            }
+        } elseif ($ch == '$') {
+            // todo
+        }
+        if ($this->src->peek(1) == ';') {
+            $this->src->read(1);
+        }
+        $token->value = $value;
+        $token->loc->end = $this->getPos();
+
+        return $token;
+    }
+
+    /**
+     * @desc int 赋值语句
+     */
+    public function readInt()
+    {
+
+    }
+
+    public function readStringAssign()
+    {
+        $token = new Token();
+        // 赋值语句包含 类型名、标识符、值
+        $token->type = TokenType::ASSIGN_STRING;
+        $token->loc->start = $this->getPos();
+        // 1.读取类型名
+        // 2.读取标识符
+        // 3.读取表达式值
+        $token->typeOfAssign = $this->src->read(6);// string
+        $this->skipWhitespace();
+        // 读取消耗标识符
+        $token->identifier = $this->readIdentity();
+        $this->skipWhitespace();
+        $this->readAssignOp();// =
+        $this->skipWhitespace();
+        $token->value = $this->readString();
+        $this->skipSemi();
+
+        return $token;
     }
 
     /**
@@ -142,6 +211,17 @@ class Lexer
                 continue;
             }
             break;
+        }
+    }
+
+
+    /**
+     * @desc 跳过语句后的分号
+     */
+    public function skipSemi()
+    {
+        if ($this->src->peek(1) == ';') {
+            $this->src->read(1);
         }
     }
 

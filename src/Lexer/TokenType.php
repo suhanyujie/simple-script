@@ -21,6 +21,7 @@ class TokenType
         SUB = "-",
 
         PRINT_STMT = "print",
+        ASSIGN_STRING = "ASSIGN_STRING",
 
         STRING = "string",
         NUMBER = "number";
