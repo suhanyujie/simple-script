@@ -29,7 +29,7 @@ class Lexer
     }
 
     /**
-     * @desc 前看一个 token
+     * @desc 前看一个 token、一段字符
      */
     public function peek()
     {
