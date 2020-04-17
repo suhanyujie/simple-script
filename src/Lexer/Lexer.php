@@ -124,6 +124,7 @@ class Lexer
 
     }
 
+    // 读取 string 类型的赋值语句
     public function readStringAssign()
     {
         $token = new Token();
