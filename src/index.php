@@ -16,6 +16,7 @@ use SRC\Lexer\Parser;
  *
  */
 $code = <<<CODE
+    int a = 123;
   print "12312312";
   string a = '12312312'; 
 CODE;

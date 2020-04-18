@@ -8,6 +8,8 @@
 
 namespace SRC\Lexer;
 
+use PHPUnit\Framework\Constraint\IsFalse;
+
 /**
  * 词法分析器
  * Class Lexer
@@ -118,8 +120,46 @@ class Lexer
 
     /**
      * @desc int 赋值语句
+     *  - 变量声明/赋值
      */
     public function readInt()
+    {
+        $flag = $this->src->peek(3);
+        if ($flag !== 'int') $this->makeException();
+        $token = new Token();
+        $token->type = TokenType::ASSIGN_INT;
+        $token->loc->start = $this->getPos();
+        // 消耗类型名
+        $this->src->read(3);
+        $this->skipWhitespace();
+        // 消耗标识符
+        $token->identifier = $this->readIdentity();
+        $this->skipWhitespace();
+        if ($this->src->peek(1) == TokenType::ASSIGN_OP) {
+            // 消耗掉赋值操作符 `=`
+            $this->src->read(1);
+            $token->value = $this->readAddExpr();
+        }
+
+        return $token;
+    }
+
+    /**
+     * @desc 读取加法算术表达式
+     */
+    public function readAddExpr()
+    {
+        $this->skipWhitespace();
+        $token = new Token();
+        $token->type = TokenType::ADD_EXPR;
+        $token->loc->start = $this->getPos();
+
+    }
+
+    /**
+     * @desc 读取表达式
+     */
+    public function readExpr()
     {
 
     }
@@ -168,7 +208,7 @@ class Lexer
             if (in_array($tmpCh, ["'", '"'])) {
                 break;
             } elseif ($tmpCh === Source::EOF) {
-                throw $this->makeExcepton();
+                throw $this->makeException();
             }
             array_push($value, $tmpCh);
         }
@@ -258,9 +298,8 @@ class Lexer
     /**
      * @desc 通用异常
      */
-    public function makeExcepton()
+    public function makeException()
     {
-        return new \Exception("Unexpected error in line:{$this->src
-        ->line} column:{$this->src->col}!");
+        return new \Exception("Unexpected error in line:{$this->src->line} column:{$this->src->col}!");
     }
 }

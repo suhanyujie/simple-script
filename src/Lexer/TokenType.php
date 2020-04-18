@@ -14,14 +14,18 @@ class TokenType
     const EOF = "eof",
         IDENTITY = "identity",
 
-        ASSIGN_OP = "=",
         MUL = "*",
         DIV = "/",
         ADD = "+",
         SUB = "-",
 
         PRINT_STMT = "print",
+
+        ASSIGN_OP = "=",
         ASSIGN_STRING = "ASSIGN_STRING",
+        ASSIGN_INT = "ASSIGN_INT",
+
+        ADD_EXPR = "ADD_EXPR",
 
         STRING = "string",
         NUMBER = "number";

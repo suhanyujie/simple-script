@@ -13,3 +13,4 @@
 ## 参考
 * https://github.com/suhanyujie/hello_parser_of_js
 * https://hsiaosiyuan0.gitbook.io/icj
+* 自顶向下 https://time.geekbang.org/column/article/119891
