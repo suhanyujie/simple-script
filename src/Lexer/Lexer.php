@@ -243,7 +243,6 @@ class Lexer
         $value = "";
         while(true) {
             $ch = $this->src->peek(1);
-            echo $ch."\n";
             if (is_numeric($ch)) {
                 $this->src->read(1);
                 $value .= $ch;

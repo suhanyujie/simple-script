@@ -10,6 +10,8 @@ include_once __DIR__."/../vendor/autoload.php";
 use SRC\Lexer\Source;
 use SRC\Lexer\Lexer;
 use SRC\Lexer\Parser;
+use SRC\Lexer\Token;
+use SRC\Lexer\TokenType;
 
 /**
  * 编写读取源码相关逻辑
@@ -28,9 +30,30 @@ $lexer = new Lexer($srcObj);
 // 词法解析
 $parser = new Parser($lexer);
 
+function printTokenTree(Token $tokenTree = null)
+{
+    if (empty($tokenTree)) return "";
+    echo "Calculating:{$tokenTree->type}\n";
+    if ($tokenTree->type == TokenType::ASSIGN_INT) {
+        $currentToken = $tokenTree->value;
+        if ($currentToken->type === TokenType::ADD_EXPR) {
+            $childs = $currentToken->child;
+            if (!empty($childs)) {
+                printTokenTree($currentToken);
+            } else {
+                echo "\tResult:".$currentToken->value."\n";
+            }
+            echo "\tResult:".$currentToken->value."\n";
+        }
+    } elseif ($tokenTree->type == TokenType::NUMBER) {
+        echo "\tResult:".$tokenTree->value."\n";
+    }
+}
+
 for ($i=0;$i<10;$i++) {
-    $token = $lexer->next();
-    print_r($token);
+    $tokenTree = $lexer->next();
+//    print_r($token);
+    printTokenTree($tokenTree);
     break;
 }
 
