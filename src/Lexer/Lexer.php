@@ -54,7 +54,7 @@ class Lexer
             case 'i':
                 $flag = $this->src->peek(3);
                 if ($flag === 'int') {
-                    return $this->readInt();
+                    return $this->readIntAssign();
                 }
                 break;
             case 's':
@@ -76,6 +76,31 @@ class Lexer
         }
     }
 
+    /**
+     * @desc 解析 int 型赋值表达式
+     */
+    public function readIntAssign()
+    {
+        $flag = $this->src->peek(3);
+        if ($flag !== 'int') $this->makeException();
+        $token = new Token();
+        $token->type = TokenType::ASSIGN_INT;
+        $token->loc->start = $this->getPos();
+        // 消耗类型名
+        $this->src->read(3);
+        $this->skipWhitespace();
+        // 消耗标识符
+        $token->identifier = $this->readIdentity();
+        $this->skipWhitespace();
+        if ($this->src->peek(1) == TokenType::ASSIGN_OP) {
+            // 消耗掉赋值操作符 `=`
+            $this->src->read(1);
+            $token->value = $this->readAddExpr();
+        }
+        $token->loc->end = $this->getPos();
+
+        return $token;
+    }
 
     /**
      * @desc print 语句
@@ -107,7 +132,7 @@ class Lexer
                 }
             }
         } elseif ($ch == '$') {
-            // todo
+            // todo 打印变量
         }
         if ($this->src->peek(1) == ';') {
             $this->src->read(1);
@@ -140,6 +165,7 @@ class Lexer
             $this->src->read(1);
             $token->value = $this->readAddExpr();
         }
+        $token->loc->end = $this->getPos();
 
         return $token;
     }
@@ -149,19 +175,86 @@ class Lexer
      */
     public function readAddExpr()
     {
+        if (empty($count)) static $count = 1;
         $this->skipWhitespace();
         $token = new Token();
         $token->type = TokenType::ADD_EXPR;
         $token->loc->start = $this->getPos();
+        $node1 = $multiExprNode = $this->readMultipleExpr();
+        $token->value = $multiExprNode;
+        $this->skipWhitespace();
+        $flag = $this->src->peek(1);
+        if ($flag === TokenType::ADD) {
+            // 消耗算术符号
+            $this->src->read(1);
+            $node2 = $this->readAddExpr();
+            if (!empty($node2)) {
+                $tmpStoreToken = $token;
+                $token = new Token();
+                $token->type = TokenType::ADD_EXPR;
+                $token->loc->start = $tmpStoreToken->loc->start;
+                $token->child[] = $node1;
+                $token->child[] = $node2;
+            }
+        }
+        $token->loc->end = $this->getPos();
 
+        return $token;
     }
 
     /**
-     * @desc 读取表达式
+     * @desc 解析乘法表达式
      */
-    public function readExpr()
+    public function readMultipleExpr()
     {
+        $this->skipWhitespace();
+        $token = new Token();
+        $token->type = TokenType::MULTIPLE_EXPR;
+        $token->loc->start = $this->getPos();
+        $token->value = $this->readNumber();
+        $this->skipWhitespace();
+        $flag = $this->src->peek(1);
+        if ($flag === TokenType::MUL) {
+            $this->src->read(1);
+            $node2 = $this->readMultipleExpr();
+            $tmpStoreToken = $token;
+            $token = new Token();
+            $token->type = TokenType::MULTIPLE_EXPR;
+            $token->loc->start = $tmpStoreToken->loc->start;
+            $token->child[] = $tmpStoreToken;
+            $token->child[] = $node2;
+        } else {
+            $token->type = TokenType::NUMBER;
+        }
+        $token->loc->end = $this->getPos();
 
+        return $token;
+    }
+
+    /**
+     * @desc
+     */
+    public function readNumber()
+    {
+        $this->skipWhitespace();
+        $token = new Token();
+        $token->type = TokenType::NUMBER;
+        $token->loc->start = $this->getPos();
+        $value = "";
+        while(true) {
+            $ch = $this->src->peek(1);
+            echo $ch."\n";
+            if (is_numeric($ch)) {
+                $this->src->read(1);
+                $value .= $ch;
+            } else {
+                break;
+            }
+        }
+        $token->value = $value;
+        $token->loc->end = $this->getPos();
+
+        return $token;
     }
 
     // 读取 string 类型的赋值语句
@@ -254,7 +347,6 @@ class Lexer
             break;
         }
     }
-
 
     /**
      * @desc 跳过语句后的分号

@@ -26,6 +26,7 @@ class TokenType
         ASSIGN_INT = "ASSIGN_INT",
 
         ADD_EXPR = "ADD_EXPR",
+        MULTIPLE_EXPR = "MULTIPLE_EXPR",
 
         STRING = "string",
         NUMBER = "number";

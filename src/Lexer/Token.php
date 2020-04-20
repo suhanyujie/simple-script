@@ -23,6 +23,8 @@ class Token
      */
     public $value;
 
+    public $child = [];
+
     /**
      * @var SourceLoc
      * token 对应的源码位置等信息对象

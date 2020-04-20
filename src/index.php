@@ -16,7 +16,7 @@ use SRC\Lexer\Parser;
  *
  */
 $code = <<<CODE
-    int a = 123;
+    int a = 123 + 10 * 3;
   print "12312312";
   string a = '12312312'; 
 CODE;
@@ -29,7 +29,9 @@ $lexer = new Lexer($srcObj);
 $parser = new Parser($lexer);
 
 for ($i=0;$i<10;$i++) {
-    var_dump($lexer->next());
+    $token = $lexer->next();
+    print_r($token);
+    break;
 }
 
 exit(PHP_EOL.'09:03'.PHP_EOL);
