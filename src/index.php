@@ -18,7 +18,7 @@ use SRC\Lexer\TokenType;
  *
  */
 $code = <<<CODE
-    int a = 123 + 10 * 3;
+    int a = 123 + 10 * 3 + 98;
   print "12312312";
   string a = '12312312'; 
 CODE;
@@ -46,7 +46,41 @@ function printTokenTree(Token $tokenTree = null)
             echo "\tResult:".$currentToken->value."\n";
         }
     } elseif ($tokenTree->type == TokenType::NUMBER) {
-        echo "\tResult:".$tokenTree->value."\n";
+        if (is_object($tokenTree->value)) {
+            echo "\tResult:".$tokenTree->value->value."\n";
+        } else {
+            echo "\tResult:".$tokenTree->value."\n";
+        }
+    } elseif ($tokenTree->type == TokenType::ADD_EXPR) {
+        $childs = $tokenTree->child;
+        foreach ($childs as $child) {
+            switch ($child->type) {
+                case TokenType::NUMBER:
+                    if (is_object($child->value)) {
+                        echo "\tResult:".$child->value->value."\n";
+                    } else {
+                        echo "\tResult:".$child->value."\n";
+                    }
+                    break;
+                default:
+                    printTokenTree($child);
+            }
+        }
+    } elseif ($tokenTree->type == TokenType::MULTIPLE_EXPR) {
+        if (empty($tokenTree->value)) {
+            $childs = $tokenTree->child;
+            foreach ($childs as $child) {
+                switch ($child->type) {
+                    case TokenType::NUMBER:
+                        echo "\tResult:".$child->value."\n";
+                        break;
+                    default:
+                        printTokenTree($child);
+                }
+            }
+        } else {
+            printTokenTree($tokenTree->value);
+        }
     }
 }
 

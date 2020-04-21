@@ -172,16 +172,22 @@ class Lexer
 
     /**
      * @desc 读取加法算术表达式
+     *
+        addExpr
+            : multipleExpr
+            | multipleExpr plus addExpr
+            ;
+     *
      */
     public function readAddExpr()
     {
         if (empty($count)) static $count = 1;
         $this->skipWhitespace();
         $token = new Token();
-        $token->type = TokenType::ADD_EXPR;
+        $token->type = TokenType::MULTIPLE_EXPR;
         $token->loc->start = $this->getPos();
         $node1 = $multiExprNode = $this->readMultipleExpr();
-        $token->value = $multiExprNode;
+        $token->value = $node1;
         $this->skipWhitespace();
         $flag = $this->src->peek(1);
         if ($flag === TokenType::ADD) {
@@ -204,27 +210,30 @@ class Lexer
 
     /**
      * @desc 解析乘法表达式
+     *
+       multipleExpr
+            : intLiteral
+            | intLiteral star multipleExpr
      */
     public function readMultipleExpr()
     {
         $this->skipWhitespace();
         $token = new Token();
-        $token->type = TokenType::MULTIPLE_EXPR;
+        $token->type = TokenType::NUMBER;
         $token->loc->start = $this->getPos();
         $token->value = $this->readNumber();
+        $token->value = $token->value->value;
         $this->skipWhitespace();
         $flag = $this->src->peek(1);
         if ($flag === TokenType::MUL) {
             $this->src->read(1);
-            $node2 = $this->readMultipleExpr();
             $tmpStoreToken = $token;
+            $node2 = $this->readMultipleExpr();
             $token = new Token();
             $token->type = TokenType::MULTIPLE_EXPR;
             $token->loc->start = $tmpStoreToken->loc->start;
             $token->child[] = $tmpStoreToken;
             $token->child[] = $node2;
-        } else {
-            $token->type = TokenType::NUMBER;
         }
         $token->loc->end = $this->getPos();
 
@@ -232,7 +241,7 @@ class Lexer
     }
 
     /**
-     * @desc
+     * @desc 解析数值
      */
     public function readNumber()
     {
